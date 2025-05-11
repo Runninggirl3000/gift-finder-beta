@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Finding the Perfect Gift...</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
@@ -10,14 +10,38 @@
 <body class="bg-image">
   <main class="card text-center">
     <div class="gift-icon">🎁</div>
-    <h1>Finding the perfect gift for your loved one...</h1>
-    <p>Please hold on while we wrap the magic...</p>
+    <h1>Finding the perfect gift...</h1>
+    <p>Hang tight while we work our magic.</p>
   </main>
 
   <script>
-    setTimeout(() => {
-      window.location.href = "recommendations.html";
-    }, 4000); // adjust timing as needed
+    const data = JSON.parse(localStorage.getItem("giftFinderData"));
+
+    if (data) {
+      fetch("https://gift-finder-api.onrender.com/recommend", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+        .then(res => res.json())
+        .then(response => {
+          if (response.success) {
+            localStorage.setItem("giftFinderSuggestions", response.suggestions);
+          } else {
+            localStorage.setItem("giftFinderSuggestions", "ERROR: Failed to fetch suggestions");
+          }
+          window.location.href = "recommendations.html";
+        })
+        .catch(error => {
+          console.error("Error fetching GPT suggestions:", error);
+          localStorage.setItem("giftFinderSuggestions", "ERROR: Request failed");
+          window.location.href = "recommendations.html";
+        });
+    } else {
+      window.location.href = "index.html";
+    }
   </script>
 </body>
 </html>

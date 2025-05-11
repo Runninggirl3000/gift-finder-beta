@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Let's Go Shopping for Your Gift</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: #2b2b2b;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      text-align: center;
+      margin: 1.5rem 0;
+    }
+
+    #gift-options {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .gift-link {
+      display: inline-block;
+      width: 260px; /* Fixed width for consistent sizing */
+      padding: 0.75rem 1.2rem;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+      background-color: #6f4e37;
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      text-align: center;
+      transition: background-color 0.3s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .gift-link:hover {
+      background-color: #5a3e2d;
+    }
+  </style>
+</head>
+
+<body class="bg-image">
+  <main class="card">
+    <h1>Let's Shop for Your Gift!</h1>
+    <div id="gift-options"></div>
+  </main>
+
+  <script>
+    const suggestions = localStorage.getItem("giftFinderSuggestions");
+    const data = JSON.parse(localStorage.getItem("giftFinderData"));
+    const giftListEl = document.getElementById("gift-options");
+
+    if (!suggestions || !data) {
+      window.location.href = "index.html";
+    }
+
+    const gifts = Array.from(suggestions.matchAll(/"([^"]+)"/g)).map(match => match[1]);
+
+    if (gifts.length === 0) {
+      giftListEl.innerHTML = "<p style='text-align:center;'>No clear product names were found. Please go back and try again.</p>";
+    } else {
+      const baseUrl = data.country?.toLowerCase().includes("singapore")
+        ? "https://www.amazon.sg/s?k="
+        : "https://www.amazon.com/s?k=";
+
+      gifts.forEach(gift => {
+        const query = encodeURIComponent(gift);
+        const link = document.createElement("a");
+        link.className = "gift-link";
+        link.href = baseUrl + query;
+        link.target = "_blank";
+        link.textContent = gift;
+        giftListEl.appendChild(link);
+      });
+    }
+  </script>
+</body>
+</html>

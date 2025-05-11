@@ -6,73 +6,119 @@
   <title>Your Gift Recommendations</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: #2b2b2b;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .gift-section {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      padding: 1rem;
+      text-align: left;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .button-group button {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #6f4e37; /* warm brown */
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .button-group button:hover {
+      background-color: #5a3e2d;
+    }
+
+    .amazon-link {
+      font-size: 0.9em;
+      text-decoration: underline;
+      color: #555;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem 0;
+      font-size: 0.8rem;
+    }
+  </style>
 </head>
 <body class="bg-image">
   <main class="card">
-    <h1>🎉 We found the perfect gifts for <span id="recipient-name"></span>!</h1>
-
-    <div class="gift-section">
-      <h2>🎀 Under $25</h2>
-      <p id="reason-25"></p>
-      <a id="link-25" href="#" target="_blank">Search this gift on Amazon</a>
-    </div>
-
-    <div class="gift-section">
-      <h2>🎁 Under $50</h2>
-      <p id="reason-50"></p>
-      <a id="link-50" href="#" target="_blank">Search this gift on Amazon</a>
-    </div>
-
-    <div class="gift-section">
-      <h2>💝 Feeling generous</h2>
-      <p id="reason-500"></p>
-      <a id="link-500" href="#" target="_blank">Search this gift on Amazon</a>
+    <h1>Gift recommendations for <span id="recipient-name"></span></h1>
+    <div class="gift-section" id="gpt-output" style="white-space: pre-wrap;"></div>
+    <div class="button-group">
+      <button onclick="regenerateSuggestions()">Suggest Other Gifts</button>
+      <button onclick="window.location.href='index.html'">Find Gift for Someone Else</button>
+      <button onclick="window.location.href='choose-gift.html'">Buy on Amazon</button>
     </div>
   </main>
 
   <footer>
-    <p>&copy; 2025 Gift Finder. All rights reserved.</p>
+    &copy; 2025 Gift Finder. All rights reserved.
   </footer>
 
   <script>
     const data = JSON.parse(localStorage.getItem("giftFinderData"));
     const suggestions = localStorage.getItem("giftFinderSuggestions");
-    console.log("GPT Raw Suggestions:", suggestions);
 
     if (data) {
       document.getElementById("recipient-name").textContent = data.name;
 
       if (suggestions && !suggestions.startsWith("ERROR")) {
-        const extractGift = (label) => {
-          const pattern = new RegExp(`\\d+\\.\\s*${label}:\\s*(.*?)(?=\\d+\\.\\s|$)`, "is");
-          const match = suggestions.match(pattern);
-          return match ? match[1].trim() : null;
-        };
-
-        const updateGiftSection = (label, reasonId, linkId) => {
-          const suggestion = extractGift(label);
-          document.getElementById(reasonId).textContent = suggestion || `Could not parse a gift suggestion for ${label}`;
-
-          let searchTermMatch = suggestion
-            ? (suggestion.match(/"([^"]+)"/) || suggestion.match(/^([^.,:;!]+)/))
-            : null;
-          let searchTerm = searchTermMatch ? searchTermMatch[1] : (suggestion ? suggestion.split(" ").slice(0, 5).join(" ") : "gift");
-
-          const baseUrl = data.country.toLowerCase().includes("singapore")
-            ? "https://www.amazon.sg/s?k="
-            : "https://www.amazon.com/s?k=";
-
-          document.getElementById(linkId).href = `${baseUrl}${encodeURIComponent(searchTerm)}`;
-        };
-
-        updateGiftSection("Under $25", "reason-25", "link-25");
-        updateGiftSection("Under $50", "reason-50", "link-50");
-        updateGiftSection("Feeling generous", "reason-500", "link-500");
+        document.getElementById("gpt-output").textContent = suggestions;
       } else {
-        document.querySelector("main").innerHTML = `<h2 style="text-align:center;">Sorry, we couldn't fetch gift ideas.<br>Please try again.</h2>`;
+        document.getElementById("gpt-output").innerHTML = `<h2 style="text-align:center;">Sorry, we couldn't fetch gift ideas.<br>Please try again.</h2>`;
       }
     } else {
       window.location.href = "index.html";
+    }
+
+    function regenerateSuggestions() {
+      const data = JSON.parse(localStorage.getItem("giftFinderData"));
+      if (data) {
+        fetch("https://gift-finder-api.onrender.com/recommend", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(response => {
+          if (response.success) {
+            localStorage.setItem("giftFinderSuggestions", response.suggestions);
+            document.getElementById("gpt-output").textContent = response.suggestions;
+          } else {
+            document.getElementById("gpt-output").textContent = "Sorry, we couldn't fetch new suggestions.";
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching GPT suggestions:", error);
+          document.getElementById("gpt-output").textContent = "Something went wrong. Please try again later.";
+        });
+      }
     }
   </script>
 </body>

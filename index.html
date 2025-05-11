@@ -14,7 +14,7 @@
       <p>Let's help you find the perfect gift for your loved ones. Just fill in a few quick details and let the magic begin.</p>
     </section>
 
-    <form id="gift-form">
+    <form id="gift-form" action="loading.html" method="post">
       <label>
         Name*
         <input type="text" name="name" required />
@@ -67,40 +67,5 @@
   <footer>
     &copy; 2025 Gift Finder. All rights reserved.
   </footer>
-
-  <script>
-    document.getElementById("gift-form").addEventListener("submit", async function (e) {
-      e.preventDefault();
-
-      // Clear previous GPT result
-      localStorage.removeItem("giftFinderSuggestions");
-
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData.entries());
-      localStorage.setItem("giftFinderData", JSON.stringify(data));
-
-      try {
-        const res = await fetch("https://gift-finder-api.onrender.com/recommend", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        });
-
-        const result = await res.json();
-        if (result.success) {
-          localStorage.setItem("giftFinderSuggestions", result.suggestions);
-        } else {
-          localStorage.setItem("giftFinderSuggestions", "ERROR: Failed to fetch suggestions");
-        }
-      } catch (err) {
-        console.error("GPT fetch failed:", err);
-        localStorage.setItem("giftFinderSuggestions", "ERROR: Request failed");
-      }
-
-      window.location.href = "loading.html";
-    });
-  </script>
 </body>
 </html>
