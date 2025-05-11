@@ -1,34 +1,106 @@
-<script>
-  document.getElementById("gift-form").addEventListener("submit", async function (e) {
-    e.preventDefault();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gift Finder (Beta)</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-image">
+  <main class="card">
+    <section class="intro">
+      <h2>Welcome to Gift Finder 🎁</h2>
+      <p>Let's help you find the perfect gift for your loved ones. Just fill in a few quick details and let the magic begin.</p>
+    </section>
 
-    // Clear previous GPT results to avoid stale data
-    localStorage.removeItem("giftFinderSuggestions");
+    <form id="gift-form">
+      <label>
+        Name*
+        <input type="text" name="name" required />
+      </label>
 
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData.entries());
-    localStorage.setItem("giftFinderData", JSON.stringify(data));
+      <label>
+        Birthday*
+        <input type="date" name="birthday" required />
+      </label>
 
-    try {
-      const res = await fetch("https://gift-finder-api.onrender.com/recommend", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      });
+      <label>
+        Relationship to you*
+        <input type="text" name="relationship" required />
+      </label>
 
-      const result = await res.json();
-      if (result.success) {
-        localStorage.setItem("giftFinderSuggestions", result.suggestions);
-      } else {
-        localStorage.setItem("giftFinderSuggestions", "ERROR: Failed to fetch suggestions");
+      <label>
+        Occupation*
+        <input type="text" name="occupation" required />
+      </label>
+
+      <label>
+        Gender*
+        <select name="gender" required>
+          <option value="">Select</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+      </label>
+
+      <label>
+        Interests (comma-separated)*
+        <input type="text" name="interests" required />
+      </label>
+
+      <label>
+        Most recent milestone, if applicable
+        <input type="text" name="milestone" />
+      </label>
+
+      <label>
+        Country of residence*
+        <input type="text" name="country" required />
+      </label>
+
+      <button type="submit">Submit</button>
+    </form>
+  </main>
+
+  <footer>
+    &copy; 2025 Gift Finder. All rights reserved.
+  </footer>
+
+  <script>
+    document.getElementById("gift-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      // Clear previous GPT result
+      localStorage.removeItem("giftFinderSuggestions");
+
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+      localStorage.setItem("giftFinderData", JSON.stringify(data));
+
+      try {
+        const res = await fetch("https://gift-finder-api.onrender.com/recommend", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+        if (result.success) {
+          localStorage.setItem("giftFinderSuggestions", result.suggestions);
+        } else {
+          localStorage.setItem("giftFinderSuggestions", "ERROR: Failed to fetch suggestions");
+        }
+      } catch (err) {
+        console.error("GPT fetch failed:", err);
+        localStorage.setItem("giftFinderSuggestions", "ERROR: Request failed");
       }
-    } catch (err) {
-      console.error("GPT fetch failed:", err);
-      localStorage.setItem("giftFinderSuggestions", "ERROR: Request failed");
-    }
 
-    window.location.href = "loading.html";
-  });
-</script>
+      window.location.href = "loading.html";
+    });
+  </script>
+</body>
+</html>
