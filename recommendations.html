@@ -37,6 +37,7 @@
   <script>
     const data = JSON.parse(localStorage.getItem("giftFinderData"));
     const suggestions = localStorage.getItem("giftFinderSuggestions");
+console.log("GPT Raw Suggestions:", suggestions);
 
     if (data) {
       document.getElementById("recipient-name").textContent = data.name;
@@ -45,14 +46,16 @@
         const extractGift = (label) => {
           const regex = new RegExp(`\\d+\\.\\s*${label}:\\s*(.+?)(?=\\n\\d+\\.|$)`, "is");
           const match = suggestions.match(regex);
-          return match ? match[1].trim() : `Suggested gift ${label.toLowerCase()}`;
+          return match ? match[1].trim() : null;
         };
 
         const updateGiftSection = (label, reasonId, linkId) => {
           const suggestion = extractGift(label);
-          document.getElementById(reasonId).textContent = suggestion;
+          document.getElementById(reasonId).textContent = suggestion || `Could not parse a gift suggestion for ${label}`;
 
-          let searchTermMatch = suggestion.match(/"([^"]+)"/) || suggestion.match(/^([^.,:;!]+)/);
+          let searchTermMatch = suggestion
+  ? (suggestion.match(/"([^"]+)"/) || suggestion.match(/^([^.,:;!]+)/))
+  : null;
           let searchTerm = searchTermMatch ? searchTermMatch[1] : suggestion.split(" ").slice(0, 5).join(" ");
 
           const baseUrl = data.country.toLowerCase().includes("singapore")
@@ -62,9 +65,9 @@
           document.getElementById(linkId).href = `${baseUrl}${encodeURIComponent(searchTerm)}`;
         };
 
-        updateGiftSection("Under \$25", "reason-25", "link-25");
-        updateGiftSection("Under \$50", "reason-50", "link-50");
-        updateGiftSection("Feeling generous(?: \(up to \$500\))?", "reason-500", "link-500");
+        updateGiftSection("Under $25", "reason-25", "link-25");
+        updateGiftSection("Under $50", "reason-50", "link-50");
+        updateGiftSection("Feeling generous", "reason-500", "link-500");
       } else {
         document.querySelector("main").innerHTML = `<h2 style="text-align:center;">Sorry, we couldn't fetch gift ideas.<br>Please try again.</h2>`;
       }
