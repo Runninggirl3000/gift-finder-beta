@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Gift Recommendations</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-image">
+  <main class="card">
+    <h1>🎉 We found the perfect gifts for <span id="recipient-name"></span>!</h1>
+
+    <div class="gift-section">
+      <h2>🎀 Under $25</h2>
+      <p id="reason-25"></p>
+      <a id="link-25" href="#" target="_blank">Search this gift on Amazon</a>
+    </div>
+
+    <div class="gift-section">
+      <h2>🎁 Under $50</h2>
+      <p id="reason-50"></p>
+      <a id="link-50" href="#" target="_blank">Search this gift on Amazon</a>
+    </div>
+
+    <div class="gift-section">
+      <h2>💝 Feeling generous</h2>
+      <p id="reason-500"></p>
+      <a id="link-500" href="#" target="_blank">Search this gift on Amazon</a>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Gift Finder. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const data = JSON.parse(localStorage.getItem("giftFinderData"));
+
+    if (data) {
+      document.getElementById("recipient-name").textContent = data.name;
+
+      fetch("https://gift-finder-api.onrender.com/recommend", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+        .then(res => res.json())
+        .then(response => {
+          if (response.success) {
+            console.log("Full AI response:", response.suggestions);
+            
+            const lines = response.suggestions.split(/\n+/).filter(line => line.trim());
+            
+            const getGiftText = (label) => {
+              const match = lines.find(line => line.toLowerCase().includes(label.toLowerCase()));
+              return match ? match.replace(/\d+\.\s*/, '').trim() : `Suggested gift for ${label}`;
+            };
+
+            document.getElementById("reason-25").textContent = getGiftText("under $25");
+            document.getElementById("reason-50").textContent = getGiftText("under $50");
+            document.getElementById("reason-500").textContent = getGiftText("feeling generous");
+
+            const extractSearchTerm = (text) => {
+              const match = text.match(/"([^"]+)"/) || text.match(/^([^.,:;!]+)/);
+              return match ? match[1] : text.split(" ").slice(0, 5).join(" ");
+            };
+
+            const baseUrl = data.country.toLowerCase().includes("singapore")
+              ? "https://www.amazon.sg/s?k="
+              : "https://www.amazon.com/s?k=";
+
+            document.getElementById("link-25").href = baseUrl + encodeURIComponent(extractSearchTerm(document.getElementById("reason-25").textContent));
+            document.getElementById("link-50").href = baseUrl + encodeURIComponent(extractSearchTerm(document.getElementById("reason-50").textContent));
+            document.getElementById("link-500").href = baseUrl + encodeURIComponent(extractSearchTerm(document.getElementById("reason-500").textContent));
+
+          } else {
+            alert("Failed to load recommendations. Please try again later.");
+          }
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          alert("Something went wrong while fetching gift ideas.");
+        });
+    }
+  </script>
+</body>
+</html>
