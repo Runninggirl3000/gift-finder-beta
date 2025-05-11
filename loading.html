@@ -15,9 +15,40 @@
   </main>
 
   <script>
-    setTimeout(() => {
-      window.location.href = "recommendations.html";
-    }, 5000);
+    const data = JSON.parse(localStorage.getItem("giftFinderData"));
+
+    async function fetchRecommendations() {
+      try {
+        const res = await fetch("https://gift-finder-api.onrender.com/recommend", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        if (result.success) {
+          localStorage.setItem("giftFinderSuggestions", result.suggestions);
+        } else {
+          localStorage.setItem("giftFinderSuggestions", "ERROR: Failed to fetch suggestions");
+        }
+      } catch (err) {
+        console.error("Error preloading suggestions:", err);
+        localStorage.setItem("giftFinderSuggestions", "ERROR: Request failed");
+      } finally {
+        setTimeout(() => {
+          window.location.href = "recommendations.html";
+        }, 5000);
+      }
+    }
+
+    if (data) {
+      fetchRecommendations();
+    } else {
+      window.location.href = "index.html";
+    }
   </script>
 </body>
 </html>

@@ -36,54 +36,40 @@
 
   <script>
     const data = JSON.parse(localStorage.getItem("giftFinderData"));
+    const suggestions = localStorage.getItem("giftFinderSuggestions");
 
     if (data) {
       document.getElementById("recipient-name").textContent = data.name;
 
-      fetch("https://gift-finder-api.onrender.com/recommend", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      })
-        .then(res => res.json())
-        .then(response => {
-          if (response.success) {
-            console.log("Full AI response:", response.suggestions);
-            
-            const lines = response.suggestions.split(/\n+/).filter(line => line.trim());
-            
-            const getGiftText = (label) => {
-              const match = lines.find(line => line.toLowerCase().includes(label.toLowerCase()));
-              return match ? match.replace(/\d+\.\s*/, '').trim() : `Suggested gift for ${label}`;
-            };
+      if (suggestions && !suggestions.startsWith("ERROR")) {
+        const extractGift = (label) => {
+          const regex = new RegExp(`\\d+\\.\\s*${label}:\\s*(.+?)(?=\\n\\d+\\.|$)`, "is");
+          const match = suggestions.match(regex);
+          return match ? match[1].trim() : `Suggested gift ${label.toLowerCase()}`;
+        };
 
-            document.getElementById("reason-25").textContent = getGiftText("under $25");
-            document.getElementById("reason-50").textContent = getGiftText("under $50");
-            document.getElementById("reason-500").textContent = getGiftText("feeling generous");
+        const updateGiftSection = (label, reasonId, linkId) => {
+          const suggestion = extractGift(label);
+          document.getElementById(reasonId).textContent = suggestion;
 
-            const extractSearchTerm = (text) => {
-              const match = text.match(/"([^"]+)"/) || text.match(/^([^.,:;!]+)/);
-              return match ? match[1] : text.split(" ").slice(0, 5).join(" ");
-            };
+          let searchTermMatch = suggestion.match(/"([^"]+)"/) || suggestion.match(/^([^.,:;!]+)/);
+          let searchTerm = searchTermMatch ? searchTermMatch[1] : suggestion.split(" ").slice(0, 5).join(" ");
 
-            const baseUrl = data.country.toLowerCase().includes("singapore")
-              ? "https://www.amazon.sg/s?k="
-              : "https://www.amazon.com/s?k=";
+          const baseUrl = data.country.toLowerCase().includes("singapore")
+            ? "https://www.amazon.sg/s?k="
+            : "https://www.amazon.com/s?k=";
 
-            document.getElementById("link-25").href = baseUrl + encodeURIComponent(extractSearchTerm(document.getElementById("reason-25").textContent));
-            document.getElementById("link-50").href = baseUrl + encodeURIComponent(extractSearchTerm(document.getElementById("reason-50").textContent));
-            document.getElementById("link-500").href = baseUrl + encodeURIComponent(extractSearchTerm(document.getElementById("reason-500").textContent));
+          document.getElementById(linkId).href = `${baseUrl}${encodeURIComponent(searchTerm)}`;
+        };
 
-          } else {
-            alert("Failed to load recommendations. Please try again later.");
-          }
-        })
-        .catch(error => {
-          console.error("Error:", error);
-          alert("Something went wrong while fetching gift ideas.");
-        });
+        updateGiftSection("Under \$25", "reason-25", "link-25");
+        updateGiftSection("Under \$50", "reason-50", "link-50");
+        updateGiftSection("Feeling generous(?: \(up to \$500\))?", "reason-500", "link-500");
+      } else {
+        document.querySelector("main").innerHTML = `<h2 style="text-align:center;">Sorry, we couldn't fetch gift ideas.<br>Please try again.</h2>`;
+      }
+    } else {
+      window.location.href = "index.html";
     }
   </script>
 </body>
