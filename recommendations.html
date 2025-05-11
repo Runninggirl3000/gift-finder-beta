@@ -44,10 +44,10 @@
 
     if (suggestions && !suggestions.startsWith("ERROR")) {
       const extractGift = (label) => {
-        const regex = new RegExp(`\d+\.\s*${label}:\s*(.+?)(?=\n\d+\.|$)`, "is");
-        const match = suggestions.match(regex);
-        return match ? match[1].trim() : null;
-      };
+  const pattern = new RegExp(`\d+\.\s*${label}:\s*(.*?)(?=\d+\.\s*\w|$)`, "i");
+  const match = suggestions.match(pattern);
+  return match ? match[1].trim() : null;
+};
 
       const updateGiftSection = (label, reasonId, linkId) => {
         const suggestion = extractGift(label);

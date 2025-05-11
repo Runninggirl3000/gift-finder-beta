@@ -1,42 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Gift Recommendations</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body class="bg-image">
-  <main class="card">
-    <h1>🎉 We found the perfect gifts for <span id="recipient-name"></span>!</h1>
-
-    <div class="gift-section">
-      <h2>🎀 Under $25</h2>
-      <p id="reason-25"></p>
-      <a id="link-25" href="#" target="_blank">Search this gift on Amazon</a>
-    </div>
-
-    <div class="gift-section">
-      <h2>🎁 Under $50</h2>
-      <p id="reason-50"></p>
-      <a id="link-50" href="#" target="_blank">Search this gift on Amazon</a>
-    </div>
-
-    <div class="gift-section">
-      <h2>💝 Feeling generous</h2>
-      <p id="reason-500"></p>
-      <a id="link-500" href="#" target="_blank">Search this gift on Amazon</a>
-    </div>
-  </main>
-
-  <footer>
-    <p>&copy; 2025 Gift Finder. All rights reserved.</p>
-  </footer>
-
-  <script>
+<script>
   document.getElementById("gift-form").addEventListener("submit", async function (e) {
     e.preventDefault();
+
+    // Clear previous GPT results to avoid stale data
+    localStorage.removeItem("giftFinderSuggestions");
 
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
@@ -65,5 +32,3 @@
     window.location.href = "loading.html";
   });
 </script>
-</body>
-</html>
