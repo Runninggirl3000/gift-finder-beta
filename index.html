@@ -3,57 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gift Finder (Beta)</title>
+  <title>Gift Finder</title>
+  <link rel="stylesheet" href="styles.css" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
 </head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-J1TCZKWKRZ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-J1TCZKWKRZ');
-</script>
 <body class="bg-image">
   <main class="card">
-    <section class="intro">
-      <h2>Welcome to Gift Finder</h2>
-      <p>Let's help you find the perfect gift for your loved ones. Just fill in a few quick details and let the magic begin.</p>
-    </section>
+    <h1>Gift Finder</h1>
+    <p>Tell us about your loved one and we’ll help you find the perfect gift.</p>
 
     <form id="gift-form">
-      <label>Name*<input type="text" name="name" required /></label>
-      <label>Birthday*<input type="date" name="birthday" required /></label>
-      <label>Relationship to you*<input type="text" name="relationship" required /></label>
-      <label>Occupation*<input type="text" name="occupation" required /></label>
-      <label>
-        Gender*
-        <select name="gender" required>
-          <option value="">Select</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Other">Other</option>
-        </select>
-      </label>
-      <label>Interests (comma-separated)*<input type="text" name="interests" required /></label>
-      <label>Most recent milestone (optional)<input type="text" name="milestone" /></label>
-      <label>Country of residence*<input type="text" name="country" required /></label>
+      <input type="text" name="name" placeholder="Name" required />
+      <input type="date" name="birthday" required />
 
-      <button type="submit">Submit</button>
+      <select name="gender" required>
+        <option value="" disabled selected>Gender</option>
+        <option value="female">Female</option>
+        <option value="male">Male</option>
+        <option value="nonbinary">Non-binary</option>
+        <option value="other">Other</option>
+      </select>
+
+      <input type="text" name="relationship" placeholder="Relationship to you (e.g. friend, husband)" required />
+      <input type="text" name="occupation" placeholder="Occupation / child / student" />
+      <input type="text" name="interests" placeholder="Hobbies or interests" />
+      <input type="text" name="country" placeholder="Country they live in" />
+      <input type="text" name="milestone" placeholder="Any special milestone?" />
+
+      <button type="submit">Find a Gift</button>
     </form>
+
+    <footer>Gift Finder &copy; 2025</footer>
   </main>
 
-  <footer>
-    &copy; 2025 Gift Finder. All rights reserved.
-  </footer>
-
   <script>
-    document.getElementById("gift-form").addEventListener("submit", function (e) {
+    const form = document.getElementById("gift-form");
+
+    form.addEventListener("submit", function (e) {
       e.preventDefault();
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData.entries());
+
+      const formData = new FormData(form);
+      const data = {
+        name: formData.get("name"),
+        birthday: formData.get("birthday"),
+        gender: formData.get("gender"),
+        relationship: formData.get("relationship"),
+        occupation: formData.get("occupation"),
+        interests: formData.get("interests"),
+        country: formData.get("country"),
+        milestone: formData.get("milestone")
+      };
+
       localStorage.setItem("giftFinderData", JSON.stringify(data));
       window.location.href = "loading.html";
     });
