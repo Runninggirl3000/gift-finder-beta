@@ -1,7 +1,5 @@
-/* Import elegant and readable font */
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap');
 
-/* Base styles */
 body {
   font-family: 'DM Sans', sans-serif;
   margin: 0;
@@ -19,17 +17,20 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-/* Card container for form and content blocks */
+/* Card layout */
 .card {
   background: rgba(255, 255, 255, 0.9);
   border-radius: 24px;
   padding: 32px 24px;
-  max-width: 420px;
-  width: 90%;
+  max-width: 600px;
+  width: 100%;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(6px);
+  box-sizing: border-box;
 }
 
 /* Typography */
@@ -40,10 +41,16 @@ h1, h2, h3 {
 }
 
 p {
-  text-align: center;
   font-size: 0.95rem;
   margin-bottom: 24px;
   color: #5a4b4b;
+}
+
+.gift-section {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  padding: 1rem 0;
+  text-align: left;
 }
 
 /* Inputs & Selects */
@@ -70,7 +77,14 @@ textarea:focus {
 }
 
 /* Buttons */
-button {
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 1rem;
+}
+
+.button-group button {
   width: 100%;
   padding: 12px;
   background-color: #8b5e3c;
@@ -83,12 +97,20 @@ button {
   transition: background-color 0.3s ease;
 }
 
-button + button {
-  margin-top: 10px;
+.button-group button:hover {
+  background-color: #744c30;
 }
 
-button:hover {
-  background-color: #744c30;
+@media (min-width: 600px) {
+  .button-group {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .button-group button {
+    flex: 1;
+    width: auto;
+  }
 }
 
 /* Footer */
@@ -96,10 +118,10 @@ footer {
   text-align: center;
   font-size: 0.75rem;
   color: #9c9c9c;
-  margin-top: 16px;
+  margin-top: 1.5rem;
 }
 
-/* Gift choice container (used on recommendation.html or choose-gift.html) */
+/* Gift choice container (used elsewhere) */
 .gift-choice {
   background: #fffaf6;
   padding: 16px;
@@ -107,15 +129,4 @@ footer {
   margin-bottom: 12px;
   border: 1px solid #e4ded9;
   text-align: left;
-}
-
-/* Responsive typography for smaller screens */
-@media (max-width: 480px) {
-  h1 {
-    font-size: 1.5rem;
-  }
-
-  .card {
-    padding: 24px 16px;
-  }
 }
