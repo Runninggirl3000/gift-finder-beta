@@ -28,7 +28,7 @@
 
     .gift-link {
       display: inline-block;
-      width: 260px; /* Fixed width for consistent sizing */
+      width: 260px;
       padding: 0.75rem 1.2rem;
       margin: 0.5rem 0;
       border-radius: 8px;
@@ -48,49 +48,60 @@
     }
   </style>
 </head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-J1TCZKWKRZ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-J1TCZKWKRZ');
-</script>
 <body class="bg-image">
   <main class="card">
     <h1>Let's Shop for Your Gift!</h1>
     <div id="gift-options"></div>
   </main>
 
-  <script>
-    const suggestions = localStorage.getItem("giftFinderSuggestions");
-    const data = JSON.parse(localStorage.getItem("giftFinderData"));
-    const giftListEl = document.getElementById("gift-options");
+<script>
+  const suggestions = localStorage.getItem("giftFinderSuggestions");
+  const data = JSON.parse(localStorage.getItem("giftFinderData"));
+  const giftListEl = document.getElementById("gift-options");
 
-    if (!suggestions || !data) {
-      window.location.href = "index.html";
-    }
+  if (!suggestions || !data) {
+    window.location.href = "index.html";
+  }
 
-    const gifts = Array.from(suggestions.matchAll(/"([^"]+)"/g)).map(match => match[1]);
+  const baseUrl = data.country?.toLowerCase().includes("singapore")
+    ? "https://www.amazon.sg/s?k="
+    : "https://www.amazon.com/s?k=";
 
-    if (gifts.length === 0) {
-      giftListEl.innerHTML = "<p style='text-align:center;'>No clear product names were found. Please go back and try again.</p>";
-    } else {
-      const baseUrl = data.country?.toLowerCase().includes("singapore")
-        ? "https://www.amazon.sg/s?k="
-        : "https://www.amazon.com/s?k=";
+  const lines = suggestions.split('\n').filter(line =>
+    line.trim().startsWith('1.') ||
+    line.trim().startsWith('2.') ||
+    line.trim().startsWith('3.')
+  );
 
-      gifts.forEach(gift => {
-        const query = encodeURIComponent(gift);
-        const link = document.createElement("a");
-        link.className = "gift-link";
-        link.href = baseUrl + query;
-        link.target = "_blank";
-        link.textContent = gift;
-        giftListEl.appendChild(link);
-      });
-    }
-  </script>
+  if (lines.length === 0) {
+    giftListEl.innerHTML = "<p style='text-align:center;'>No clear product names were found. Please go back and try again.</p>";
+  } else {
+    lines.forEach(line => {
+      const colonIndex = line.indexOf(':');
+      const description = colonIndex >= 0 ? line.slice(colonIndex + 1).trim() : line.trim();
+
+      const keywords = description
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/gi, '')
+        .split(' ')
+        .filter(word => word.length > 3)
+        .slice(0, 4)
+        .join('+');
+
+      const buttonText = description.length > 60
+        ? description.slice(0, 57) + '...'
+        : description;
+
+      const link = document.createElement("a");
+      link.className = "gift-link";
+      link.href = baseUrl + keywords;
+      link.target = "_blank";
+      link.textContent = buttonText;
+      giftListEl.appendChild(link);
+    });
+  }
+</script>
+
 </body>
 </html>
