@@ -6,16 +6,33 @@
   <title>Finding the Perfect Gift...</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-</head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-J1TCZKWKRZ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-J1TCZKWKRZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-J1TCZKWKRZ');
+  </script>
+  <style>
+    .gift-icon {
+      font-size: 3rem;
+      animation: bob 1.5s infinite;
+      display: block;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
 
-  gtag('config', 'G-J1TCZKWKRZ');
-</script>
+    @keyframes bob {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+  </style>
+</head>
 <body class="bg-image">
   <main class="card text-center">
     <div class="gift-icon">🎁</div>
@@ -24,11 +41,24 @@
   </main>
 
   <script>
-    const data = JSON.parse(localStorage.getItem("giftFinderData"));
+    const rawData = JSON.parse(localStorage.getItem("giftFinderData"));
 
-    if (!data) {
+    if (!rawData || !rawData.birthday) {
       window.location.href = "index.html";
     } else {
+      const birthday = new Date(rawData.birthday);
+      const today = new Date();
+      let age = today.getFullYear() - birthday.getFullYear();
+      const hasHadBirthdayThisYear =
+        today.getMonth() > birthday.getMonth() ||
+        (today.getMonth() === birthday.getMonth() && today.getDate() >= birthday.getDate());
+      if (!hasHadBirthdayThisYear) age--;
+
+      const data = {
+        ...rawData,
+        age: age
+      };
+
       fetch("https://gift-finder-api.onrender.com/recommend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
