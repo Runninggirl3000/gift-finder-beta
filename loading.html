@@ -17,12 +17,12 @@
   <script>
     const data = JSON.parse(localStorage.getItem("giftFinderData"));
 
-    if (data) {
+    if (!data) {
+      window.location.href = "index.html";
+    } else {
       fetch("https://gift-finder-api.onrender.com/recommend", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
       })
         .then(res => res.json())
@@ -39,8 +39,6 @@
           localStorage.setItem("giftFinderSuggestions", "ERROR: Request failed");
           window.location.href = "recommendations.html";
         });
-    } else {
-      window.location.href = "index.html";
     }
   </script>
 </body>
