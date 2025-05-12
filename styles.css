@@ -130,3 +130,30 @@ footer {
   border: 1px solid #e4ded9;
   text-align: left;
 }
+
+form button {
+  width: 100%;
+  padding: 12px;
+  background-color: #8b5e3c;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.3s ease;
+  display: block;
+}
+
+form button:hover {
+  background-color: #744c30;
+}
+
+.field-label {
+  display: block;
+  margin: 8px 0 4px;
+  font-size: 0.9rem;
+  color: #5a4b4b;
+  font-weight: 600;
+}
