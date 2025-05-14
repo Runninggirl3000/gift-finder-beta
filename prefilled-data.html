@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Loved One</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-image">
+  <main class="card">
+    <h1>Edit Loved One</h1>
+    <p>Update the details and save changes to the database.</p>
+
+    <form id="edit-form">
+      <input type="text" name="name" placeholder="Name of your loved one" required />
+
+      <label for="birthday" class="field-label">Birthday</label>
+      <input type="date" name="birthday" id="birthday" required />
+
+      <select name="gender" required>
+        <option value="" disabled>Gender</option>
+        <option value="female">Female</option>
+        <option value="male">Male</option>
+        <option value="nonbinary">Non-binary</option>
+        <option value="other">Other</option>
+      </select>
+
+      <input type="text" name="relationship" placeholder="Relationship to you" required />
+      <input type="text" name="occupation" placeholder="Occupation" />
+      <input type="text" name="interests" placeholder="Hobbies or interests" />
+      <input type="text" name="country" placeholder="Country" />
+      <input type="text" name="milestone" placeholder="Any special milestone?" />
+
+      <button type="submit">Save Changes</button>
+    </form>
+
+    <footer>Gift Finder &copy; 2025</footer>
+  </main>
+
+  <script src="prefilled-data.js"></script>
+</body>
+</html>

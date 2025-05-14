@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gift Finder</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .active {
+      background-color: #744c30 !important;
+    }
+  </style>
+</head>
+<body class="bg-image">
+  <main class="card">
+    <!-- Top bar -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h2 style="margin: 0; color: #442c2e;">Gift Finder</h2>
+      <a href="login.html" style="color: #8b5e3c; text-decoration: none; font-weight: bold;">Log out</a>
+    </div>
+
+    <!-- Greeting -->
+    <h1>Welcome, Vicky!</h1>
+
+    <!-- Sort toggle -->
+    <div style="text-align: center; margin-bottom: 1rem;" class="button-group">
+      <button onclick="sortBy('name')" id="sortNameBtn" class="active">Sort by Name</button>
+      <button onclick="sortBy('birthday')" id="sortBirthdayBtn">Sort by Birthday</button>
+    </div>
+
+    <!-- Cards grid -->
+    <div id="cardsContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px;">
+      <!-- JS will inject cards here -->
+    </div>
+  </main>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
