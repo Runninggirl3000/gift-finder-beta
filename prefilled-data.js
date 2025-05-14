@@ -5,7 +5,7 @@ const form = document.getElementById('edit-form');
 const urlParams = new URLSearchParams(window.location.search);
 const lovedOneId = urlParams.get('id');
 
-// Fetch existing data
+// Fetch and prefill form
 async function loadLovedOne() {
   try {
     const response = await fetch(`${API_URL}/${lovedOneId}`);
@@ -21,7 +21,6 @@ async function loadLovedOne() {
   }
 }
 
-// Fill form with loaded data
 function fillForm(data) {
   form.name.value = data.name || '';
   form.birthday.value = data.birthday || '';
@@ -59,7 +58,6 @@ form.addEventListener('submit', async function (e) {
     const result = await response.json();
     if (result.success) {
       alert('Loved one updated successfully!');
-      window.location.href = 'dashboard.html'; // or wherever you want to go next
     } else {
       alert('Failed to update. Please try again.');
     }
@@ -69,7 +67,25 @@ form.addEventListener('submit', async function (e) {
   }
 });
 
-// Start
+// 🎁 Handle "Find a Gift"
+document.getElementById("findGiftBtn").addEventListener("click", () => {
+  const formData = new FormData(form);
+  const data = {
+    name: formData.get("name"),
+    birthday: formData.get("birthday"),
+    gender: formData.get("gender"),
+    relationship: formData.get("relationship"),
+    occupation: formData.get("occupation"),
+    interests: formData.get("interests"),
+    country: formData.get("country"),
+    milestone: formData.get("milestone")
+  };
+
+  localStorage.setItem("giftFinderData", JSON.stringify(data));
+  window.location.href = "loading.html";
+});
+
+// 🚀 Load if ID is present
 if (lovedOneId) {
   loadLovedOne();
 } else {
