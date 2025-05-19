@@ -43,7 +43,7 @@ function renderCards() {
 
     card.innerHTML = `
       <h3 style="margin-bottom: 0.25rem;">${person.name}</h3>
-      <p style="font-size: 0.85rem; color: #8b5e3c;">${formatDate(person.birthday)}</p>
+      <p class="birthday" style="font-size: 0.85rem; color: #8b5e3c;">${formatDate(person.birthday)}</p>
     `;
 
     card.addEventListener('click', () => {
