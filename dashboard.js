@@ -22,7 +22,13 @@ function sortBy(criteria) {
     if (criteria === 'name') {
       return a.name.localeCompare(b.name);
     } else if (criteria === 'birthday') {
-      return new Date(a.birthday) - new Date(b.birthday);
+      const aDate = new Date(a.birthday);
+      const bDate = new Date(b.birthday);
+
+      const aMonthDay = aDate.getMonth() * 100 + aDate.getDate();
+      const bMonthDay = bDate.getMonth() * 100 + bDate.getDate();
+
+      return aMonthDay - bMonthDay;
     }
   });
 
@@ -43,7 +49,10 @@ function renderCards() {
 
     card.innerHTML = `
       <h3 style="margin-bottom: 0.25rem;">${person.name}</h3>
-      <p class="birthday" style="font-size: 0.85rem; color: #8b5e3c;">${formatDate(person.birthday)}</p>
+      <p class="birthday" style="font-size: 0.85rem; color: #8b5e3c;">
+        ${formatDate(person.birthday)}<br>
+        <span style="font-size: 0.8rem; color: #a2765e;">🎉 In ${daysUntilNextBirthday(person.birthday)} days</span>
+      </p>
     `;
 
     card.addEventListener('click', () => {
@@ -57,4 +66,21 @@ function renderCards() {
 function formatDate(dateStr) {
   const options = { year: 'numeric', month: 'short', day: 'numeric' };
   return new Date(dateStr).toLocaleDateString(undefined, options);
+}
+
+function daysUntilNextBirthday(birthdayStr) {
+  const today = new Date();
+  const birthday = new Date(birthdayStr);
+  birthday.setFullYear(today.getFullYear());
+
+  // If birthday already passed this year, use next year
+  if (
+    birthday.getMonth() < today.getMonth() ||
+    (birthday.getMonth() === today.getMonth() && birthday.getDate() < today.getDate())
+  ) {
+    birthday.setFullYear(today.getFullYear() + 1);
+  }
+
+  const diffTime = birthday - today;
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
