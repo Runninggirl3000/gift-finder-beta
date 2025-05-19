@@ -6,17 +6,6 @@
   <title>Your Gift Recommendations</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <style>
-    .first-sentence {
-      font-weight: bold;
-      font-size: 1.2em;
-      display: inline;
-    }
-    .rest-sentence {
-      display: inline;
-      font-size: 1em;
-    }
-  </style>
 </head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-J1TCZKWKRZ"></script>
@@ -24,6 +13,7 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
+
   gtag('config', 'G-J1TCZKWKRZ');
 </script>
 <body class="bg-image">
@@ -36,9 +26,11 @@
       <button onclick="window.location.href='choose-gift.html'">Buy on Amazon</button>
     </div>
     <footer>
-      &copy; 2025 Gift Finder. All rights reserved.
+    &copy; 2025 Gift Finder. All rights reserved.
     </footer>
   </main>
+
+
 
   <script>
     const data = JSON.parse(localStorage.getItem("giftFinderData"));
@@ -48,22 +40,7 @@
       document.getElementById("recipient-name").textContent = data.name;
 
       if (suggestions && !suggestions.startsWith("ERROR")) {
-        const formatted = suggestions.split(/\n+/).map(paragraph => {
-          const firstSentenceEnd = paragraph.indexOf('.') + 1;
-          if (firstSentenceEnd > 0) {
-            const firstSentence = paragraph.slice(0, firstSentenceEnd);
-            const rest = paragraph.slice(firstSentenceEnd).trim();
-            return `
-              <p>
-                <span class="first-sentence">${firstSentence}</span><br/>
-                <span class="rest-sentence">${rest}</span>
-              </p>
-            `;
-          }
-          return `<p>${paragraph}</p>`;
-        }).join('');
-
-        document.getElementById("gpt-output").innerHTML = formatted;
+        document.getElementById("gpt-output").textContent = suggestions;
       } else {
         document.getElementById("gpt-output").innerHTML = `<h2 style="text-align:center;">Sorry, we couldn't fetch gift ideas.<br>Please try again.</h2>`;
       }
@@ -83,7 +60,7 @@
         .then(response => {
           if (response.success) {
             localStorage.setItem("giftFinderSuggestions", response.suggestions);
-            location.reload(); // reload to trigger new formatting
+            document.getElementById("gpt-output").textContent = response.suggestions;
           } else {
             document.getElementById("gpt-output").textContent = "Sorry, we couldn't fetch new suggestions.";
           }
@@ -96,4 +73,4 @@
     }
   </script>
 </body>
-</html
+</html>

@@ -162,13 +162,3 @@ form button:hover {
   text-align: center;
 }
 
-.first-sentence {
-  font-weight: bold;
-  font-size: 1.2em;
-  display: inline;
-}
-
-.rest-sentence {
-  display: inline;
-  font-size: 1em;
-}
