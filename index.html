@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
 </head>
 
-<!-- Google tag (gtag.js) -->
+<!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-J1TCZKWKRZ"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -43,5 +43,60 @@
       <button type="submit">Find a Gift</button>
     </form>
 
-    <!-- Dashboard access button -->
-    <div class="button-group" style="margin-top
+    <!-- ✅ Dashboard access button -->
+    <div class="button-group" style="margin-top: 1rem;">
+      <button type="button" onclick="window.location.href='dashboard.html'">Go to Dashboard</button>
+    </div>
+
+    <footer>Gift Finder &copy; 2025</footer>
+  </main>
+
+  <script>
+    const API_URL = 'https://gift-finder-api.onrender.com/loved-ones/add';
+    const form = document.getElementById("gift-form");
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = {
+        name: formData.get("name"),
+        birthday: formData.get("birthday"),
+        gender: formData.get("gender"),
+        relationship: formData.get("relationship"),
+        occupation: formData.get("occupation"),
+        interests: formData.get("interests"),
+        country: formData.get("country"),
+        milestone: formData.get("milestone")
+      };
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        // ✅ Fallback: proceed even if backend doesn't respond correctly
+        if (result.success) {
+          console.log("✅ Saved to backend");
+        } else {
+          console.warn("⚠️ Backend did not return success:", result);
+        }
+
+        // ✅ Always proceed to gift generation
+        localStorage.setItem("giftFinderData", JSON.stringify(data));
+        window.location.href = "loading.html";
+
+      } catch (err) {
+        console.error("❌ Submission error:", err);
+        alert("Something went wrong. Try again later.");
+      }
+    });
+  </script>
+</body>
+</html>
