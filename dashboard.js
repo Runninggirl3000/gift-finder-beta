@@ -22,13 +22,7 @@ function sortBy(criteria) {
     if (criteria === 'name') {
       return a.name.localeCompare(b.name);
     } else if (criteria === 'birthday') {
-      const aDate = new Date(a.birthday);
-      const bDate = new Date(b.birthday);
-
-      const aMonthDay = aDate.getMonth() * 100 + aDate.getDate();
-      const bMonthDay = bDate.getMonth() * 100 + bDate.getDate();
-
-      return aMonthDay - bMonthDay;
+      return daysUntilNextBirthday(a.birthday) - daysUntilNextBirthday(b.birthday);
     }
   });
 
@@ -73,7 +67,7 @@ function daysUntilNextBirthday(birthdayStr) {
   const birthday = new Date(birthdayStr);
   birthday.setFullYear(today.getFullYear());
 
-  // If birthday already passed this year, use next year
+  // If birthday already passed this year, move to next year
   if (
     birthday.getMonth() < today.getMonth() ||
     (birthday.getMonth() === today.getMonth() && birthday.getDate() < today.getDate())
