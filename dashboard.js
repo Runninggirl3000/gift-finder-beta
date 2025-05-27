@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (result.success && Array.isArray(result.data)) {
       lovedOnes = result.data;
-      sortBy('name'); // default sort
+      sortBy('birthday'); // default sort by upcoming birthday
     } else {
       console.error('Unexpected API response format:', result);
     }
