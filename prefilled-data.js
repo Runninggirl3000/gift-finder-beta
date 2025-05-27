@@ -85,6 +85,30 @@ document.getElementById("findGiftBtn").addEventListener("click", () => {
   window.location.href = "loading.html";
 });
 
+// 🗑️ Handle Delete
+document.getElementById("deleteBtn").addEventListener("click", async () => {
+  const confirmed = confirm('This will permanently remove all saved data for this loved one. Do you want to continue?');
+  if (!confirmed) return;
+
+  try {
+    const response = await fetch(`${API_URL}/${lovedOneId}`, {
+      method: 'DELETE'
+    });
+
+    if (response.ok) {
+      alert('Loved one deleted.');
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 1000); // wait 1 second before redirecting
+    } else {
+      alert('Failed to delete loved one.');
+    }
+  } catch (error) {
+    console.error('Error deleting loved one:', error);
+    alert('An error occurred while deleting.');
+  }
+});
+
 // 🚀 Load if ID is present
 if (lovedOneId) {
   loadLovedOne();

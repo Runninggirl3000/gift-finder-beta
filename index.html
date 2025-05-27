@@ -48,7 +48,11 @@
       <button type="button" onclick="window.location.href='dashboard.html'">Go to Dashboard</button>
     </div>
 
-    <footer>Gift Finder &copy; 2025</footer>
+    <footer>Gift Finder &copy; 2025
+    <br>Disclaimer: This website is created for learning purposes only. The information provided here should not be considered professional advice.
+    Please note that we make no guarantees regarding the accuracy, completeness, or reliability of the contents of this website.
+    Any actions you take based on the contents of this website are at your own risk. We are not liable for any losses or damages incurred from the use of this website.
+    </footer>
   </main>
 
   <script>
@@ -59,15 +63,25 @@
       e.preventDefault();
 
       const formData = new FormData(form);
+      const birthdayStr = formData.get("birthday");
+      const birthDate = new Date(birthdayStr);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+
       const data = {
         name: formData.get("name"),
-        birthday: formData.get("birthday"),
+        birthday: birthdayStr,
         gender: formData.get("gender"),
         relationship: formData.get("relationship"),
         occupation: formData.get("occupation"),
         interests: formData.get("interests"),
         country: formData.get("country"),
-        milestone: formData.get("milestone")
+        milestone: formData.get("milestone"),
+        age: age
       };
 
       try {
@@ -81,14 +95,12 @@
 
         const result = await response.json();
 
-        // ✅ Fallback: proceed even if backend doesn't respond correctly
         if (result.success) {
           console.log("✅ Saved to backend");
         } else {
           console.warn("⚠️ Backend did not return success:", result);
         }
 
-        // ✅ Always proceed to gift generation
         localStorage.setItem("giftFinderData", JSON.stringify(data));
         window.location.href = "loading.html";
 

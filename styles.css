@@ -162,3 +162,23 @@ form button:hover {
   text-align: center;
 }
 
+#deleteBtn {
+  width: 100%;
+  padding: 12px;
+  background-color: #2e2e2e;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.3s ease;
+  display: block;
+}
+
+#deleteBtn:hover {
+  background-color: #1f1f1f;
+}
+
+
